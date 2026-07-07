@@ -675,7 +675,6 @@ function Library:CreateWindow(options)
                 local DropList = Create("Frame", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
                     Size = UDim2.new(1, 0, 0, 0),
-                    AutomaticSize = Enum.AutomaticSize.Y,
                     Visible = false,
                     ClipsDescendants = true
                 }, {
@@ -685,6 +684,13 @@ function Library:CreateWindow(options)
                     Create("UIPadding", { PaddingTop = UDim.new(0, 5), PaddingBottom = UDim.new(0, 5) })
                 })
                 DropList.Parent = DropContainer
+
+                local function UpdateHeight()
+                    if isExpanded then
+                        local targetH = (#options * 25) + 10
+                        Tween(DropList, {Size = UDim2.new(1, 0, 0, targetH)}, 0.2)
+                    end
+                end
 
                 local function UpdateOptions(newOptions)
                     for _, child in pairs(DropList:GetChildren()) do
@@ -708,22 +714,30 @@ function Library:CreateWindow(options)
                             selected = opt
                             ValLabel.Text = selected
                             isExpanded = false
-                            DropList.Visible = false
+                            local tween = Tween(DropList, {Size = UDim2.new(1, 0, 0, 0)}, 0.2)
+                            tween.Completed:Connect(function() if not isExpanded then DropList.Visible = false end end)
                             Tween(Chevron, {Rotation = 0}, 0.3)
                             UpdateOptions(newOptions)
                             if callback then callback(selected) end
-                            TabContent.CanvasSize = UDim2.new(0, 0, 0, TabContent.UIListLayout.AbsoluteContentSize.Y + 40)
+                            task.delay(0.2, function() TabContent.CanvasSize = UDim2.new(0, 0, 0, TabContent.UIListLayout.AbsoluteContentSize.Y + 40) end)
                         end)
                     end
+                    UpdateHeight()
                 end
 
                 UpdateOptions(options)
 
                 ValBtn.MouseButton1Click:Connect(function()
                     isExpanded = not isExpanded
-                    DropList.Visible = isExpanded
+                    if isExpanded then
+                        DropList.Visible = true
+                        UpdateHeight()
+                    else
+                        local tween = Tween(DropList, {Size = UDim2.new(1, 0, 0, 0)}, 0.2)
+                        tween.Completed:Connect(function() if not isExpanded then DropList.Visible = false end end)
+                    end
                     Tween(Chevron, {Rotation = isExpanded and 180 or 0}, 0.3)
-                    TabContent.CanvasSize = UDim2.new(0, 0, 0, TabContent.UIListLayout.AbsoluteContentSize.Y + 40)
+                    task.delay(0.2, function() TabContent.CanvasSize = UDim2.new(0, 0, 0, TabContent.UIListLayout.AbsoluteContentSize.Y + 40) end)
                 end)
                 
                 return {
@@ -823,7 +837,6 @@ function Library:CreateWindow(options)
                 local DropList = Create("Frame", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
                     Size = UDim2.new(1, 0, 0, 0),
-                    AutomaticSize = Enum.AutomaticSize.Y,
                     Visible = false,
                     ClipsDescendants = true
                 }, {
@@ -840,6 +853,13 @@ function Library:CreateWindow(options)
                         if v then table.insert(arr, k) end
                     end
                     return arr
+                end
+
+                local function UpdateHeight()
+                    if isExpanded then
+                        local targetH = (#options * 25) + 10
+                        Tween(DropList, {Size = UDim2.new(1, 0, 0, targetH)}, 0.2)
+                    end
                 end
 
                 local function UpdateOptions(newOptions)
@@ -864,20 +884,27 @@ function Library:CreateWindow(options)
                         OptBtn.MouseButton1Click:Connect(function()
                             selectedDict[opt] = not selectedDict[opt]
                             ValLabel.Text = GetSelectedString()
-                            local isSel = selectedDict[opt] == true
-                            Tween(OptBtn, {TextColor3 = isSel and Theme.Accent or Theme.TextPrimary}, 0.2)
+                            local isSelState = selectedDict[opt] == true
+                            Tween(OptBtn, {TextColor3 = isSelState and Theme.Accent or Theme.TextPrimary}, 0.2)
                             if callback then callback(GetSelectedArray()) end
                         end)
                     end
+                    UpdateHeight()
                 end
 
                 UpdateOptions(options)
 
                 ValBtn.MouseButton1Click:Connect(function()
                     isExpanded = not isExpanded
-                    DropList.Visible = isExpanded
+                    if isExpanded then
+                        DropList.Visible = true
+                        UpdateHeight()
+                    else
+                        local tween = Tween(DropList, {Size = UDim2.new(1, 0, 0, 0)}, 0.2)
+                        tween.Completed:Connect(function() if not isExpanded then DropList.Visible = false end end)
+                    end
                     Tween(Chevron, {Rotation = isExpanded and 180 or 0}, 0.3)
-                    TabContent.CanvasSize = UDim2.new(0, 0, 0, TabContent.UIListLayout.AbsoluteContentSize.Y + 40)
+                    task.delay(0.2, function() TabContent.CanvasSize = UDim2.new(0, 0, 0, TabContent.UIListLayout.AbsoluteContentSize.Y + 40) end)
                 end)
                 
                 return {
