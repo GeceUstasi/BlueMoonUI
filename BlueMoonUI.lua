@@ -155,12 +155,12 @@ function Library:CreateWindow(options)
     -- Header Content: Right
     local PingLabel = Create("TextLabel", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(1, -160, 0, 0),
-        Size = UDim2.new(0, 50, 1, 0),
+        Position = UDim2.new(1, -230, 0, 0),
+        Size = UDim2.new(0, 80, 1, 0),
         Font = Enum.Font.Ubuntu,
         Text = Ping,
         TextColor3 = Theme.Ping,
-        TextSize = 12,
+        TextSize = 13,
         TextXAlignment = Enum.TextXAlignment.Right
     })
     PingLabel.Parent = Header
@@ -179,21 +179,36 @@ function Library:CreateWindow(options)
         end
     end)
 
-    local function CreateHeaderBtn(icon, xOffset, colorOverride)
+    local HeaderRight = Create("Frame", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(1, -145, 0, 0),
+        Size = UDim2.new(0, 130, 1, 0),
+    }, {
+        Create("UIListLayout", {
+            FillDirection = Enum.FillDirection.Horizontal,
+            HorizontalAlignment = Enum.HorizontalAlignment.Right,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+            SortOrder = Enum.SortOrder.LayoutOrder,
+            Padding = UDim.new(0, 10)
+        })
+    })
+    HeaderRight.Parent = Header
+
+    local function CreateHeaderBtn(icon, colorOverride, layoutOrder)
         local Btn = Create("TextButton", {
             BackgroundColor3 = Theme.HeaderButtonBackground,
-            Position = UDim2.new(1, xOffset, 0.5, -14),
-            Size = UDim2.new(0, 28, 0, 28),
+            Size = UDim2.new(0, 32, 0, 32),
             Text = "",
-            AutoButtonColor = false
+            AutoButtonColor = false,
+            LayoutOrder = layoutOrder
         }, {
-            Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
+            Create("UICorner", { CornerRadius = UDim.new(0, 8) }),
             Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
         })
         Create("ImageLabel", {
             BackgroundTransparency = 1,
-            Position = UDim2.new(0.5, -8, 0.5, -8),
-            Size = UDim2.new(0, 16, 0, 16),
+            Position = UDim2.new(0.5, -9, 0.5, -9),
+            Size = UDim2.new(0, 18, 0, 18),
             Image = icon,
             ImageColor3 = colorOverride or Theme.TextSecondary
         }).Parent = Btn
@@ -203,12 +218,13 @@ function Library:CreateWindow(options)
         return Btn
     end
 
-    local SettingsBtn = CreateHeaderBtn(Library.Icons.Settings, -115)
-    local HideBtn = CreateHeaderBtn(Library.Icons.EyeSlash, -80)
-    local CloseBtn = CreateHeaderBtn(Library.Icons.Power, -45, Color3.fromRGB(200, 50, 50))
-    SettingsBtn.Parent = Header
-    HideBtn.Parent = Header
-    CloseBtn.Parent = Header
+    local SettingsBtn = CreateHeaderBtn("rbxassetid://11293977610", nil, 1) -- Proper Lucide Gear
+    local HideBtn = CreateHeaderBtn("rbxassetid://11293977196", nil, 2) -- Proper Lucide Eye
+    local CloseBtn = CreateHeaderBtn("rbxassetid://11293978393", Color3.fromRGB(220, 60, 60), 3) -- Proper Lucide Power
+    
+    SettingsBtn.Parent = HeaderRight
+    HideBtn.Parent = HeaderRight
+    CloseBtn.Parent = HeaderRight
 
     CloseBtn.MouseButton1Click:Connect(function()
         local closeTween = Tween(Main, {GroupTransparency = 1, Position = UDim2.new(0.5, -400, 0.5, -260)}, 0.4, Enum.EasingStyle.Quint)
