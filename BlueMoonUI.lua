@@ -1263,169 +1263,169 @@ function Library:CreateWindow(options)
         return TabObj
     end
 
-    function Library:SaveConfig(folderName, fileName, configTable)
-        if not writefile then
-            Library:Notify("Error", "Your executor does not support writefile!", 3)
-            return
-        end
-        if not isfolder(folderName) then makefolder(folderName) end
-        
-        local success, err = pcall(function()
-            local json = game:GetService("HttpService"):JSONEncode(configTable)
-            writefile(folderName .. "/" .. fileName .. ".json", json)
+    return WindowObj
+end
+
+function Library:SaveConfig(folderName, fileName, configTable)
+    if not writefile then
+        Library:Notify("Error", "Your executor does not support writefile!", 3)
+        return
+    end
+    if not isfolder(folderName) then makefolder(folderName) end
+    
+    local success, err = pcall(function()
+        local json = game:GetService("HttpService"):JSONEncode(configTable)
+        writefile(folderName .. "/" .. fileName .. ".json", json)
+    end)
+    if success then
+        Library:Notify("Config Saved", "Successfully saved config to " .. fileName .. ".json", 3)
+    else
+        Library:Notify("Config Error", "Failed to save config: " .. tostring(err), 5)
+    end
+end
+
+function Library:LoadConfig(folderName, fileName)
+    if not readfile or not isfile then
+        Library:Notify("Error", "Your executor does not support readfile/isfile!", 3)
+        return nil
+    end
+    local path = folderName .. "/" .. fileName .. ".json"
+    
+    if isfile(path) then
+        local success, result = pcall(function()
+            local content = readfile(path)
+            return game:GetService("HttpService"):JSONDecode(content)
         end)
         if success then
-            Library:Notify("Config Saved", "Successfully saved config to " .. fileName .. ".json", 3)
+            Library:Notify("Config Loaded", "Successfully loaded config from " .. fileName .. ".json", 3)
+            return result
         else
-            Library:Notify("Config Error", "Failed to save config: " .. tostring(err), 5)
-        end
-    end
-
-    function Library:LoadConfig(folderName, fileName)
-        if not readfile or not isfile then
-            Library:Notify("Error", "Your executor does not support readfile/isfile!", 3)
+            Library:Notify("Config Error", "Failed to decode config file!", 5)
             return nil
         end
-        local path = folderName .. "/" .. fileName .. ".json"
+    else
+        Library:Notify("Config Error", "Config file not found!", 5)
+        return nil
+    end
+end
+
+function Library:CreateKeySystem(options)
+    options = options or {}
+    local keyUrl = options.KeyUrl or ""
+    local title = options.Title or "Blue Moon Key System"
+    local expectedKey = options.Key or ""
+
+    local KeyGui = Instance.new("ScreenGui")
+    KeyGui.Name = "BlueMoonKey"
+    KeyGui.Parent = CoreGui
+    
+    local KeyMain = Create("Frame", {
+        BackgroundColor3 = Theme.MainBackground,
+        Position = UDim2.new(0.5, -150, 0.5, -100),
+        Size = UDim2.new(0, 300, 0, 200),
+        Active = true,
+        Draggable = true
+    }, {
+        Create("UICorner", { CornerRadius = UDim.new(0, 8) }),
+        Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
+    })
+    KeyMain.Parent = KeyGui
+    
+    Create("TextLabel", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0, 10),
+        Size = UDim2.new(1, 0, 0, 30),
+        Font = Enum.Font.Ubuntu,
+        Text = title,
+        TextColor3 = Theme.Accent,
+        TextSize = 18
+    }).Parent = KeyMain
+    
+    local KeyBox = Create("TextBox", {
+        BackgroundColor3 = Theme.SectionBackground,
+        Position = UDim2.new(0.1, 0, 0.4, 0),
+        Size = UDim2.new(0.8, 0, 0, 35),
+        Font = Enum.Font.Ubuntu,
+        PlaceholderText = "Enter Key Here...",
+        Text = "",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14
+    }, { Create("UICorner", { CornerRadius = UDim.new(0, 6) }), Create("UIStroke", { Color = Theme.Border, Thickness = 1 }) })
+    KeyBox.Parent = KeyMain
+    
+    local StatusLabel = Create("TextLabel", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0.65, 0),
+        Size = UDim2.new(1, 0, 0, 20),
+        Font = Enum.Font.Ubuntu,
+        Text = "Waiting for key...",
+        TextColor3 = Theme.TextSecondary,
+        TextSize = 12
+    })
+    StatusLabel.Parent = KeyMain
+    
+    local CheckBtn = Create("TextButton", {
+        BackgroundColor3 = Theme.Accent,
+        Position = UDim2.new(0.1, 0, 0.8, 0),
+        Size = UDim2.new(0.35, 0, 0, 30),
+        Font = Enum.Font.Ubuntu,
+        Text = "Check Key",
+        TextColor3 = Theme.MainBackground,
+        TextSize = 14
+    }, { Create("UICorner", { CornerRadius = UDim.new(0, 6) }) })
+    CheckBtn.Parent = KeyMain
+    
+    local GetBtn = Create("TextButton", {
+        BackgroundColor3 = Theme.HeaderButtonBackground,
+        Position = UDim2.new(0.55, 0, 0.8, 0),
+        Size = UDim2.new(0.35, 0, 0, 30),
+        Font = Enum.Font.Ubuntu,
+        Text = "Get Key",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14
+    }, { Create("UICorner", { CornerRadius = UDim.new(0, 6) }), Create("UIStroke", { Color = Theme.Border, Thickness = 1 }) })
+    GetBtn.Parent = KeyMain
+    
+    GetBtn.MouseButton1Click:Connect(function()
+        if setclipboard and options.GetKeyUrl then
+            setclipboard(options.GetKeyUrl)
+            StatusLabel.Text = "Copied link to clipboard!"
+        else
+            StatusLabel.Text = "Your executor doesn't support setclipboard!"
+        end
+    end)
+    
+    CheckBtn.MouseButton1Click:Connect(function()
+        StatusLabel.Text = "Checking..."
+        local inputKey = KeyBox.Text
+        local realKey = expectedKey
         
-        if isfile(path) then
+        if keyUrl ~= "" then
             local success, result = pcall(function()
-                local content = readfile(path)
-                return game:GetService("HttpService"):JSONDecode(content)
+                return game:HttpGet(keyUrl)
             end)
             if success then
-                Library:Notify("Config Loaded", "Successfully loaded config from " .. fileName .. ".json", 3)
-                return result
+                realKey = result:gsub("\n", ""):gsub("\r", "") -- Clean string
             else
-                Library:Notify("Config Error", "Failed to decode config file!", 5)
-                return nil
+                StatusLabel.Text = "Failed to fetch key from URL!"
+                return
             end
-        else
-            Library:Notify("Config Error", "Config file not found!", 5)
-            return nil
         end
-    end
-
-    function Library:CreateKeySystem(options)
-        options = options or {}
-        local keyUrl = options.KeyUrl or ""
-        local title = options.Title or "Blue Moon Key System"
-        local expectedKey = options.Key or ""
-
-        local KeyGui = Instance.new("ScreenGui")
-        KeyGui.Name = "BlueMoonKey"
-        KeyGui.Parent = CoreGui
         
-        local KeyMain = Create("Frame", {
-            BackgroundColor3 = Theme.MainBackground,
-            Position = UDim2.new(0.5, -150, 0.5, -100),
-            Size = UDim2.new(0, 300, 0, 200),
-            Active = true,
-            Draggable = true
-        }, {
-            Create("UICorner", { CornerRadius = UDim.new(0, 8) }),
-            Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
-        })
-        KeyMain.Parent = KeyGui
-        
-        Create("TextLabel", {
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 0, 0, 10),
-            Size = UDim2.new(1, 0, 0, 30),
-            Font = Enum.Font.Ubuntu,
-            Text = title,
-            TextColor3 = Theme.Accent,
-            TextSize = 18
-        }).Parent = KeyMain
-        
-        local KeyBox = Create("TextBox", {
-            BackgroundColor3 = Theme.SectionBackground,
-            Position = UDim2.new(0.1, 0, 0.4, 0),
-            Size = UDim2.new(0.8, 0, 0, 35),
-            Font = Enum.Font.Ubuntu,
-            PlaceholderText = "Enter Key Here...",
-            Text = "",
-            TextColor3 = Theme.TextPrimary,
-            TextSize = 14
-        }, { Create("UICorner", { CornerRadius = UDim.new(0, 6) }), Create("UIStroke", { Color = Theme.Border, Thickness = 1 }) })
-        KeyBox.Parent = KeyMain
-        
-        local StatusLabel = Create("TextLabel", {
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 0, 0.65, 0),
-            Size = UDim2.new(1, 0, 0, 20),
-            Font = Enum.Font.Ubuntu,
-            Text = "Waiting for key...",
-            TextColor3 = Theme.TextSecondary,
-            TextSize = 12
-        })
-        StatusLabel.Parent = KeyMain
-        
-        local CheckBtn = Create("TextButton", {
-            BackgroundColor3 = Theme.Accent,
-            Position = UDim2.new(0.1, 0, 0.8, 0),
-            Size = UDim2.new(0.35, 0, 0, 30),
-            Font = Enum.Font.Ubuntu,
-            Text = "Check Key",
-            TextColor3 = Theme.MainBackground,
-            TextSize = 14
-        }, { Create("UICorner", { CornerRadius = UDim.new(0, 6) }) })
-        CheckBtn.Parent = KeyMain
-        
-        local GetBtn = Create("TextButton", {
-            BackgroundColor3 = Theme.HeaderButtonBackground,
-            Position = UDim2.new(0.55, 0, 0.8, 0),
-            Size = UDim2.new(0.35, 0, 0, 30),
-            Font = Enum.Font.Ubuntu,
-            Text = "Get Key",
-            TextColor3 = Theme.TextPrimary,
-            TextSize = 14
-        }, { Create("UICorner", { CornerRadius = UDim.new(0, 6) }), Create("UIStroke", { Color = Theme.Border, Thickness = 1 }) })
-        GetBtn.Parent = KeyMain
-        
-        GetBtn.MouseButton1Click:Connect(function()
-            if setclipboard and options.GetKeyUrl then
-                setclipboard(options.GetKeyUrl)
-                StatusLabel.Text = "Copied link to clipboard!"
-            else
-                StatusLabel.Text = "Your executor doesn't support setclipboard!"
-            end
-        end)
-        
-        CheckBtn.MouseButton1Click:Connect(function()
-            StatusLabel.Text = "Checking..."
-            local inputKey = KeyBox.Text
-            local realKey = expectedKey
-            
-            if keyUrl ~= "" then
-                local success, result = pcall(function()
-                    return game:HttpGet(keyUrl)
-                end)
-                if success then
-                    realKey = result:gsub("\n", ""):gsub("\r", "") -- Clean string
-                else
-                    StatusLabel.Text = "Failed to fetch key from URL!"
-                    return
-                end
-            end
-            
-            if inputKey == realKey then
-                StatusLabel.Text = "Success! Loading UI..."
-                StatusLabel.TextColor3 = Color3.fromRGB(50, 200, 50)
-                task.wait(1)
-                KeyGui:Destroy()
-                if options.OnComplete then options.OnComplete() end
-            else
-                StatusLabel.Text = "Invalid Key!"
-                StatusLabel.TextColor3 = Color3.fromRGB(200, 50, 50)
-                task.wait(1.5)
-                StatusLabel.TextColor3 = Theme.TextSecondary
-                StatusLabel.Text = "Waiting for key..."
-            end
-        end)
-    end
-
-    return Library
+        if inputKey == realKey then
+            StatusLabel.Text = "Success! Loading UI..."
+            StatusLabel.TextColor3 = Color3.fromRGB(50, 200, 50)
+            task.wait(1)
+            KeyGui:Destroy()
+            if options.OnComplete then options.OnComplete() end
+        else
+            StatusLabel.Text = "Invalid Key!"
+            StatusLabel.TextColor3 = Color3.fromRGB(200, 50, 50)
+            task.wait(1.5)
+            StatusLabel.TextColor3 = Theme.TextSecondary
+            StatusLabel.Text = "Waiting for key..."
+        end
+    end)
 end
 
 return Library
