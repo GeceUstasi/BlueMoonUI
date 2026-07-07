@@ -21,7 +21,7 @@ local Library = {
     },
     Icons = {
         Moon = "rbxassetid://7733911828",
-        Settings = "rbxassetid://7734068321",
+        Settings = "rbxassetid://7059346373", -- Fixed Gear icon
         EyeSlash = "rbxassetid://7733774602",
         Power = "rbxassetid://7734053495",
         ChevronDown = "rbxassetid://7733749065",
@@ -187,7 +187,8 @@ function Library:CreateWindow(options)
             Text = "",
             AutoButtonColor = false
         }, {
-            Create("UICorner", { CornerRadius = UDim.new(0, 6) })
+            Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
+            Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
         })
         Create("ImageLabel", {
             BackgroundTransparency = 1,
@@ -197,14 +198,14 @@ function Library:CreateWindow(options)
             ImageColor3 = colorOverride or Theme.TextSecondary
         }).Parent = Btn
         
-        Btn.MouseEnter:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.Border}, 0.1) end)
-        Btn.MouseLeave:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.HeaderButtonBackground}, 0.1) end)
+        Btn.MouseEnter:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.Border}, 0.2) end)
+        Btn.MouseLeave:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.HeaderButtonBackground}, 0.2) end)
         return Btn
     end
 
-    local SettingsBtn = CreateHeaderBtn(Library.Icons.Settings, -100)
-    local HideBtn = CreateHeaderBtn(Library.Icons.EyeSlash, -65)
-    local CloseBtn = CreateHeaderBtn(Library.Icons.Power, -30, Color3.fromRGB(200, 50, 50))
+    local SettingsBtn = CreateHeaderBtn(Library.Icons.Settings, -115)
+    local HideBtn = CreateHeaderBtn(Library.Icons.EyeSlash, -80)
+    local CloseBtn = CreateHeaderBtn(Library.Icons.Power, -45, Color3.fromRGB(200, 50, 50))
     SettingsBtn.Parent = Header
     HideBtn.Parent = Header
     CloseBtn.Parent = Header
