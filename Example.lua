@@ -1,5 +1,5 @@
--- Require the local module. In a real exploit environment this might be loadstring(game:HttpGet(...))
-local BlueMoonUI = require(script.Parent:WaitForChild("BlueMoonUI"))
+-- Require the module from GitHub using loadstring
+local BlueMoonUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/master/BlueMoonUI.lua"))()
 
 -- Create the main window
 local Window = BlueMoonUI:CreateWindow({
