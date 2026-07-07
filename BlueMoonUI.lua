@@ -1135,7 +1135,7 @@ function Library:CreateWindow(options)
                         local absPos = ColorDisplayBtn.AbsolutePosition
                         local absSize = ColorDisplayBtn.AbsoluteSize
                         -- Position directly under the button, aligned to the right edge
-                        DropList.Position = UDim2.new(0, absPos.X + absSize.X - 150, 0, absPos.Y + absSize.Y + 5)
+                        DropList.Position = UDim2.new(0, absPos.X + absSize.X - 150, 0, absPos.Y + absSize.Y + 15)
                         DropList.Visible = true
                         DropList.Size = UDim2.new(0, 150, 0, 0)
                         Tween(DropList, {Size = UDim2.new(0, 150, 0, 90)}, 0.2)
