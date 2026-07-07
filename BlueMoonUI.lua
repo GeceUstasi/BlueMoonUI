@@ -971,8 +971,7 @@ function Library:CreateWindow(options)
                 }, {
                     Create("UIListLayout", { 
                         SortOrder = Enum.SortOrder.LayoutOrder, 
-                        Padding = UDim.new(0, 5),
-                        HorizontalAlignment = Enum.HorizontalAlignment.Right
+                        Padding = UDim.new(0, 5)
                     })
                 })
                 CPContainer.Parent = SecFrame
@@ -1014,7 +1013,7 @@ function Library:CreateWindow(options)
 
                 local DropList = Create("Frame", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
-                    Size = UDim2.new(0, 150, 0, 90),
+                    Size = UDim2.new(1, 0, 0, 90),
                     Visible = false,
                     ClipsDescendants = true
                 }, {
@@ -1139,10 +1138,10 @@ function Library:CreateWindow(options)
                     isExpanded = not isExpanded
                     if isExpanded then
                         DropList.Visible = true
-                        DropList.Size = UDim2.new(0, 150, 0, 0)
-                        Tween(DropList, {Size = UDim2.new(0, 150, 0, 90)}, 0.2)
+                        DropList.Size = UDim2.new(1, 0, 0, 0)
+                        Tween(DropList, {Size = UDim2.new(1, 0, 0, 90)}, 0.2)
                     else
-                        local tween = Tween(DropList, {Size = UDim2.new(0, 150, 0, 0)}, 0.2)
+                        local tween = Tween(DropList, {Size = UDim2.new(1, 0, 0, 0)}, 0.2)
                         tween.Completed:Connect(function()
                             if not isExpanded then DropList.Visible = false end
                         end)
