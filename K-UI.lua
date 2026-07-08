@@ -407,9 +407,9 @@ function Library:CreateWindow(options)
         return Btn
     end
 
-    local SettingsBtn = CreateHeaderBtn("rbxassetid://11293977610", nil, 1) -- Proper Lucide Gear
-    local HideBtn = CreateHeaderBtn("rbxassetid://11293977196", nil, 2) -- Proper Lucide Eye
-    local CloseBtn = CreateHeaderBtn("rbxassetid://11293978393", Color3.fromRGB(220, 60, 60), 3) -- Proper Lucide Power
+    local SettingsBtn = CreateHeaderBtn(Library.Icons.Settings, nil, 1)
+    local HideBtn = CreateHeaderBtn(Library.Icons.EyeSlash, nil, 2)
+    local CloseBtn = CreateHeaderBtn(Library.Icons.Power, Color3.fromRGB(220, 60, 60), 3)
     
     SettingsBtn.Parent = HeaderRight
     HideBtn.Parent = HeaderRight
@@ -661,6 +661,10 @@ function Library:CreateWindow(options)
         TabBtn.MouseButton1Click:Connect(function()
             TabObj:Select()
         end)
+        
+        function TabObj:Hide()
+            TabBtn.Visible = false
+        end
 
         function TabObj:CreateSection(title)
             local SecFrame = Create("Frame", {
@@ -1954,7 +1958,7 @@ function Library:CreateWindow(options)
                     TextSize = 12,
                     TextWrapped = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
-                    TextYAlignment = Enum.TextXAlignment.Top
+                    TextYAlignment = Enum.TextYAlignment.Top
                 }).Parent = InfoBox
             end
 
@@ -1993,6 +1997,7 @@ function Library:CreateWindow(options)
     end)
 
     local SettingsTab = WindowObj:CreateTab("Settings", Library.Icons.Settings)
+    SettingsTab:Hide() -- Hide from left sidebar, only accessible via top right cogwheel
     
     SettingsBtn.MouseButton1Click:Connect(function()
         SettingsTab:Select()
