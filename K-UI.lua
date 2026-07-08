@@ -55,8 +55,27 @@ local function Tween(instance, properties, duration, easingStyle, easingDirectio
     return tween
 end
 
+local function PlaySound(id, volume, pitch)
+    pcall(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = id
+        sound.Volume = volume or 1
+        sound.Pitch = pitch or 1
+        sound.Parent = Workspace
+        sound:Play()
+        game:GetService("Debris"):AddItem(sound, 2)
+    end)
+end
+
 Library.Flags = {}
 Library.ToggleKey = Enum.KeyCode.RightControl
+
+Library.Sounds = {
+    Hover = "rbxassetid://6895079853",
+    Click = "rbxassetid://6895080073",
+    ToggleOn = "rbxassetid://6895079853", -- Using hover sound but with higher pitch
+    ToggleOff = "rbxassetid://6895079853", -- Using hover sound but with lower pitch
+}
 
 function Library.CopyToClipboard(text)
     local success, _ = pcall(function()
@@ -270,7 +289,7 @@ function Library:CreateWindow(options)
     }).Parent = OpenBtn
     OpenBtn.Parent = ScreenGui
 
-    OpenBtn.MouseEnter:Connect(function() Tween(OpenBtn, {BackgroundColor3 = Theme.Border}, 0.2) end)
+    OpenBtn.MouseEnter:Connect(function() PlaySound(Library.Sounds.Hover, 0.5) Tween(OpenBtn, {BackgroundColor3 = Theme.Border}, 0.2) end)
     OpenBtn.MouseLeave:Connect(function() Tween(OpenBtn, {BackgroundColor3 = Theme.MainBackground}, 0.2) end)
 
     -- Smooth Open Animation
@@ -459,7 +478,7 @@ function Library:CreateWindow(options)
             ImageColor3 = colorOverride or Theme.TextSecondary
         }).Parent = Btn
         
-        Btn.MouseEnter:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.Border}, 0.2) end)
+        Btn.MouseEnter:Connect(function() PlaySound(Library.Sounds.Hover, 0.5) Tween(Btn, {BackgroundColor3 = Theme.Border}, 0.2) end)
         Btn.MouseLeave:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.HeaderButtonBackground}, 0.2) end)
         return Btn
     end
@@ -1408,9 +1427,7 @@ function Library:CreateWindow(options)
                     end
                 end
 
-                Track.InputBegan:Connect(function(input)
-                    if isDisabled then return end
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                Track.InputBegan:Connect(function(input) if isDisabled then return end if input.UserInputType == Enum.UserInputType.MouseButton1 then PlaySound(Library.Sounds.Click, 1) end if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         dragging = true
                         updateSlider(input)
                     end
@@ -2006,10 +2023,7 @@ function Library:CreateWindow(options)
                 end
 
                 local isDisabled = false
-                TogBtn.MouseButton1Click:Connect(function()
-                    if isDisabled then return end
-                    SetState(not state)
-                end)
+                TogBtn.MouseButton1Click:Connect(function() if isDisabled then return end PlaySound(not state and Library.Sounds.ToggleOn or Library.Sounds.ToggleOff, 1, not state and 1.2 or 0.8) SetState(not state) end)
                 
                 local API = {}
                 API.Set = function(arg1, arg2)
@@ -2053,9 +2067,9 @@ function Library:CreateWindow(options)
                 Btn.Parent = SecFrame
 
                 local isDisabled = false
-                Btn.MouseEnter:Connect(function() if not isDisabled then Tween(Btn, {BackgroundColor3 = Color3.fromRGB(Theme.ButtonBackground.R * 255 + 10, Theme.ButtonBackground.G * 255 + 10, Theme.ButtonBackground.B * 255 + 10)}, 0.1) end end)
+                Btn.MouseEnter:Connect(function() if not isDisabled then PlaySound(Library.Sounds.Hover, 0.5)  Tween(Btn, {BackgroundColor3 = Color3.fromRGB(Theme.ButtonBackground.R * 255 + 10, Theme.ButtonBackground.G * 255 + 10, Theme.ButtonBackground.B * 255 + 10)}, 0.1) end end)
                 Btn.MouseLeave:Connect(function() if not isDisabled then Tween(Btn, {BackgroundColor3 = Theme.ButtonBackground}, 0.1) end end)
-                Btn.MouseButton1Click:Connect(function() if not isDisabled and callback then callback() end end)
+                Btn.MouseButton1Click:Connect(function() if not isDisabled then PlaySound(Library.Sounds.Click, 1) if callback then callback() end end end)
                 local API = {}
                 API.SetVisible = function(state) Btn.Visible = state end
                 API.SetDisabled = function(state) 
@@ -2099,7 +2113,7 @@ function Library:CreateWindow(options)
                     ImageColor3 = Theme.TextSecondary
                 }).Parent = Btn
 
-                Btn.MouseEnter:Connect(function() Tween(Btn, {BackgroundColor3 = Color3.fromRGB(Theme.ButtonBackground.R * 255 + 10, Theme.ButtonBackground.G * 255 + 10, Theme.ButtonBackground.B * 255 + 10)}, 0.1) end)
+                Btn.MouseEnter:Connect(function() PlaySound(Library.Sounds.Hover, 0.5) Tween(Btn, {BackgroundColor3 = Color3.fromRGB(Theme.ButtonBackground.R * 255 + 10, Theme.ButtonBackground.G * 255 + 10, Theme.ButtonBackground.B * 255 + 10)}, 0.1) end)
                 Btn.MouseLeave:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.ButtonBackground}, 0.1) end)
                 Btn.MouseButton1Click:Connect(function() 
                     Library.CopyToClipboard(textToCopy)
@@ -2456,6 +2470,166 @@ function Library:CreateWindow(options)
     
     function WindowObj:LoadConfig(folder, file)
         Library:LoadConfig(folder, file)
+    end
+
+    function WindowObj:CreateDialog(config)
+        local title = config.Title or "Dialog"
+        local message = config.Message or "Are you sure?"
+        local buttons = config.Buttons or {}
+        
+        local DialogOverlay = Create("Frame", {
+            BackgroundColor3 = Color3.new(0, 0, 0),
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 1, 0),
+            ZIndex = 100,
+            Active = true
+        })
+        DialogOverlay.Parent = ScreenGui
+        
+        local DialogFrame = Create("CanvasGroup", {
+            BackgroundColor3 = Theme.MainBackground,
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Size = UDim2.new(0, 300, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            ZIndex = 101,
+            GroupTransparency = 1
+        }, {
+            Create("UICorner", { CornerRadius = UDim.new(0, 8) }),
+            Create("UIStroke", { Color = Theme.Border, Thickness = 1 }),
+            Create("UIListLayout", {
+                FillDirection = Enum.FillDirection.Vertical,
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 15)
+            }),
+            Create("UIPadding", {
+                PaddingTop = UDim.new(0, 20), PaddingBottom = UDim.new(0, 20),
+                PaddingLeft = UDim.new(0, 20), PaddingRight = UDim.new(0, 20)
+            })
+        })
+        DialogFrame.Parent = DialogOverlay
+        
+        local DialogScale = Create("UIScale", { Scale = 0.8 })
+        DialogScale.Parent = DialogFrame
+        
+        local TitleLbl = Create("TextLabel", {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 20),
+            Font = Enum.Font.Ubuntu,
+            Text = title,
+            TextColor3 = Theme.Accent,
+            TextSize = 16,
+            LayoutOrder = 1
+        })
+        TitleLbl.Parent = DialogFrame
+        
+        local MsgLbl = Create("TextLabel", {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            Font = Enum.Font.Ubuntu,
+            Text = message,
+            TextColor3 = Theme.TextSecondary,
+            TextSize = 14,
+            TextWrapped = true,
+            LayoutOrder = 2
+        })
+        MsgLbl.Parent = DialogFrame
+        
+        local BtnContainer = Create("Frame", {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 35),
+            LayoutOrder = 3
+        }, {
+            Create("UIListLayout", {
+                FillDirection = Enum.FillDirection.Horizontal,
+                HorizontalAlignment = Enum.HorizontalAlignment.Center,
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 10)
+            })
+        })
+        BtnContainer.Parent = DialogFrame
+        
+        local function CloseDialog()
+            Tween(DialogOverlay, {BackgroundTransparency = 1}, 0.2)
+            Tween(DialogScale, {Scale = 0.8}, 0.2)
+            local t = Tween(DialogFrame, {GroupTransparency = 1}, 0.2)
+            t.Completed:Wait()
+            DialogOverlay:Destroy()
+        end
+        
+        for i, btnConfig in ipairs(buttons) do
+            local btn = Create("TextButton", {
+                BackgroundColor3 = Theme.ButtonBackground,
+                Size = UDim2.new(0, 0, 1, 0),
+                AutomaticSize = Enum.AutomaticSize.X,
+                Font = Enum.Font.Ubuntu,
+                Text = "   " .. (btnConfig.Name or "Button") .. "   ",
+                TextColor3 = Theme.TextPrimary,
+                TextSize = 14,
+                AutoButtonColor = false,
+                LayoutOrder = i
+            }, {
+                Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
+                Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
+            })
+            btn.Parent = BtnContainer
+            
+            btn.MouseEnter:Connect(function() PlaySound(Library.Sounds.Hover, 0.5) Tween(btn, {BackgroundColor3 = Theme.Border}, 0.2) end)
+            btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = Theme.ButtonBackground}, 0.2) end)
+            btn.MouseButton1Click:Connect(function()
+                PlaySound(Library.Sounds.Click, 1)
+                CloseDialog()
+                if btnConfig.Callback then btnConfig.Callback() end
+            end)
+        end
+        
+        Tween(DialogOverlay, {BackgroundTransparency = 0.6}, 0.3)
+        Tween(DialogFrame, {GroupTransparency = 0}, 0.3)
+        Tween(DialogScale, {Scale = 1}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    end
+
+    function WindowObj:CreateWatermark(text)
+        local WatermarkFrame = Create("Frame", {
+            BackgroundColor3 = Theme.MainBackground,
+            Position = UDim2.new(0.5, 0, 0, 10),
+            AnchorPoint = Vector2.new(0.5, 0),
+            Size = UDim2.new(0, 0, 0, 25),
+            AutomaticSize = Enum.AutomaticSize.X,
+            ZIndex = 50,
+            BackgroundTransparency = 0.1
+        }, {
+            Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
+            Create("UIStroke", { Color = Theme.Border, Thickness = 1 }),
+            Create("UIPadding", {
+                PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10)
+            })
+        })
+        WatermarkFrame.Parent = ScreenGui
+        
+        local WatermarkLbl = Create("TextLabel", {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 1, 0),
+            Font = Enum.Font.Ubuntu,
+            Text = text,
+            TextColor3 = Theme.TextPrimary,
+            TextSize = 14,
+            RichText = true
+        })
+        WatermarkLbl.Parent = WatermarkFrame
+        
+        local WatermarkAPI = {}
+        function WatermarkAPI:SetText(newText)
+            WatermarkLbl.Text = newText
+        end
+        function WatermarkAPI:SetVisible(state)
+            WatermarkFrame.Visible = state
+        end
+        function WatermarkAPI:Destroy()
+            WatermarkFrame:Destroy()
+        end
+        
+        return WatermarkAPI
     end
 
     return WindowObj
