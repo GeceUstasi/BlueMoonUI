@@ -1647,7 +1647,7 @@ function Library:CreateWindow(options)
                     local center = Wheel.AbsoluteSize / 2
                     local r = sat * center.X
                     local theta = math.rad(hue * 360)
-                    local x = r * math.cos(theta)
+                    local x = r * -math.cos(theta)
                     local y = r * math.sin(theta)
                     WheelRing.Position = UDim2.new(0, center.X + x, 0, center.Y + y)
                     ValueLine.Position = UDim2.new(0, -2, 1 - val, 0)
@@ -1663,7 +1663,7 @@ function Library:CreateWindow(options)
                     local distance = math.min(delta.Magnitude, Wheel.AbsoluteSize.X / 2)
                     
                     sat = distance / (Wheel.AbsoluteSize.X / 2)
-                    hue = (math.atan2(delta.Y, delta.X) / (math.pi * 2)) % 1
+                    hue = (math.atan2(delta.Y, -delta.X) / (math.pi * 2)) % 1
                     
                     local x = distance * math.cos(math.atan2(delta.Y, delta.X))
                     local y = distance * math.sin(math.atan2(delta.Y, delta.X))
