@@ -824,7 +824,7 @@ function Library:CreateWindow(options)
                 TopBar.Parent = DropContainer
                 AddTooltip(TopBar, tooltip)
 
-                Create("TextLabel", {
+                local DropLbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Font = Enum.Font.Ubuntu,
@@ -832,7 +832,8 @@ function Library:CreateWindow(options)
                     TextColor3 = Theme.TextSecondary,
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left
-                }).Parent = TopBar
+                })
+                DropLbl.Parent = TopBar
 
                 local ValBtn = Create("TextButton", {
                     BackgroundTransparency = 1,
@@ -1004,13 +1005,13 @@ function Library:CreateWindow(options)
                 end
                 API.GetValue = function() return selected end
                 API.SetValue = function(val) API.Set(val) end
-                API.SetVisible = function(state) DropdownFrame.Visible = state end
+                API.SetVisible = function(state) DropContainer.Visible = state end
                 API.SetDisabled = function(state) 
                     ValBtn.Active = not state 
                     DropLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) DropLbl.Text = title end
-                API.SetDescription = function(desc) AddTooltip(ValBtn, desc) end
+                API.SetDescription = function(desc) AddTooltip(DropContainer, desc) end
                 API.OnChanged = function(func) callback = func end
                 API.SetOptions = function(newOpts) API.Refresh(newOpts) end
                 if flag then Library.Flags[flag] = API end
@@ -1052,7 +1053,7 @@ function Library:CreateWindow(options)
                 TopBar.Parent = DropContainer
                 AddTooltip(TopBar, tooltip)
 
-                Create("TextLabel", {
+                local DropLbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Font = Enum.Font.Ubuntu,
@@ -1060,7 +1061,8 @@ function Library:CreateWindow(options)
                     TextColor3 = Theme.TextSecondary,
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left
-                }).Parent = TopBar
+                })
+                DropLbl.Parent = TopBar
 
                 local ValBtn = Create("TextButton", {
                     BackgroundTransparency = 1,
@@ -1257,13 +1259,13 @@ function Library:CreateWindow(options)
                 end
                 API.GetValue = function() return GetSelectedArray() end
                 API.SetValue = function(val) API.Set(val) end
-                API.SetVisible = function(state) DropdownFrame.Visible = state end
+                API.SetVisible = function(state) DropContainer.Visible = state end
                 API.SetDisabled = function(state) 
                     ValBtn.Active = not state 
                     DropLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) DropLbl.Text = title end
-                API.SetDescription = function(desc) AddTooltip(ValBtn, desc) end
+                API.SetDescription = function(desc) AddTooltip(DropContainer, desc) end
                 API.OnChanged = function(func) callback = func end
                 API.SetOptions = function(newOpts) API.Refresh(newOpts) end
                 if flag then Library.Flags[flag] = API end
@@ -1388,7 +1390,7 @@ function Library:CreateWindow(options)
                 TxtContainer.Parent = SecFrame
                 AddTooltip(TxtContainer, tooltip)
 
-                Create("TextLabel", {
+                local BoxTitleLbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Font = Enum.Font.Ubuntu,
@@ -1396,7 +1398,8 @@ function Library:CreateWindow(options)
                     TextColor3 = Theme.TextSecondary,
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left
-                }).Parent = TxtContainer
+                })
+                BoxTitleLbl.Parent = TxtContainer
 
                 local BoxBg = Create("Frame", {
                     BackgroundColor3 = Theme.MainBackground,
@@ -1435,13 +1438,13 @@ function Library:CreateWindow(options)
                 end
                 API.GetValue = function() return TextBox.Text end
                 API.SetValue = function(val) API.Set(val) end
-                API.SetVisible = function(state) BoxFrame.Visible = state end
+                API.SetVisible = function(state) TxtContainer.Visible = state end
                 API.SetDisabled = function(state) 
                     TextBox.TextEditable = not state 
-                    BoxLbl.TextTransparency = state and 0.5 or 0
+                    BoxTitleLbl.TextTransparency = state and 0.5 or 0
                 end
-                API.SetTitle = function(title) BoxLbl.Text = title end
-                API.SetDescription = function(desc) AddTooltip(TextBox, desc) end
+                API.SetTitle = function(title) BoxTitleLbl.Text = title end
+                API.SetDescription = function(desc) AddTooltip(TxtContainer, desc) end
                 API.OnChanged = function(func) callback = func end
                 if flag then Library.Flags[flag] = API end
                 return API
@@ -1467,7 +1470,7 @@ function Library:CreateWindow(options)
                 BindContainer.Parent = SecFrame
                 AddTooltip(BindContainer, tooltip)
 
-                Create("TextLabel", {
+                local KeyTitleLbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Font = Enum.Font.Ubuntu,
@@ -1475,7 +1478,8 @@ function Library:CreateWindow(options)
                     TextColor3 = Theme.TextSecondary,
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left
-                }).Parent = BindContainer
+                })
+                KeyTitleLbl.Parent = BindContainer
 
                 local BindBtn = Create("TextButton", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
@@ -1587,7 +1591,7 @@ function Library:CreateWindow(options)
                 TopBar.Parent = CPContainer
                 AddTooltip(TopBar, tooltip)
 
-                Create("TextLabel", {
+                local ColorLbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Font = Enum.Font.Ubuntu,
@@ -1595,7 +1599,8 @@ function Library:CreateWindow(options)
                     TextColor3 = Theme.TextSecondary,
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left
-                }).Parent = TopBar
+                })
+                ColorLbl.Parent = TopBar
 
                 local ColorDisplayBtn = Create("TextButton", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
@@ -1821,13 +1826,13 @@ function Library:CreateWindow(options)
                 end
                 API.GetValue = function() return currentColor end
                 API.SetValue = function(val) API.Set(val) end
-                API.SetVisible = function(state) ColorFrame.Visible = state end
+                API.SetVisible = function(state) CPContainer.Visible = state end
                 API.SetDisabled = function(state) 
-                    ColorBtn.Active = not state 
+                    ColorDisplayBtn.Active = not state 
                     ColorLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) ColorLbl.Text = title end
-                API.SetDescription = function(desc) AddTooltip(ColorBtn, desc) end
+                API.SetDescription = function(desc) AddTooltip(CPContainer, desc) end
                 API.OnChanged = function(func) callback = func end
                 if flag then Library.Flags[flag] = API end
                 return API
@@ -1854,7 +1859,7 @@ function Library:CreateWindow(options)
                 TogBtn.Parent = SecFrame
                 AddTooltip(TogBtn, tooltip)
 
-                Create("TextLabel", {
+                local TogLbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Position = UDim2.new(0, 15, 0, 0),
                     Size = UDim2.new(1, -70, 1, 0),
@@ -1863,7 +1868,8 @@ function Library:CreateWindow(options)
                     TextColor3 = Theme.TextSecondary,
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left
-                }).Parent = TogBtn
+                })
+                TogLbl.Parent = TogBtn
 
                 local SwitchTrack = Create("Frame", {
                     BackgroundColor3 = state and Theme.Accent or Theme.MainBackground,
@@ -1901,14 +1907,14 @@ function Library:CreateWindow(options)
                 end
                 API.GetValue = function() return state end
                 API.SetValue = function(val) API.Set(val) end
-                API.SetVisible = function(state) ToggleBtn.Visible = state end
+                API.SetVisible = function(state) TogBtn.Visible = state end
                 API.SetDisabled = function(state) 
-                    ToggleBtn.Active = not state 
-                    ToggleBtn.AutoButtonColor = not state
-                    ToggleBtn.TextTransparency = state and 0.5 or 0
+                    TogBtn.Active = not state 
+                    TogBtn.AutoButtonColor = not state
+                    TogLbl.TextTransparency = state and 0.5 or 0
                 end
-                API.SetTitle = function(title) TglLabel.Text = title end
-                API.SetDescription = function(desc) AddTooltip(ToggleBtn, desc) end
+                API.SetTitle = function(title) TogLbl.Text = title end
+                API.SetDescription = function(desc) AddTooltip(TogBtn, desc) end
                 API.OnChanged = function(func) callback = func end
                 if flag then Library.Flags[flag] = API end
                 return API
