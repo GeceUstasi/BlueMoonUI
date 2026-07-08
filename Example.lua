@@ -64,6 +64,14 @@ local speedSlider = BasicSection:CreateSlider({
     end
 })
 
+-- Keep the walkspeed applied even if they die and respawn!
+game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    local humanoid = character:WaitForChild("Humanoid", 5)
+    if humanoid then
+        humanoid.WalkSpeed = speedSlider.GetValue()
+    end
+end)
+
 local AdvSection = ModuleTab:CreateSection("Advanced Elements")
 
 -- Dropdown
