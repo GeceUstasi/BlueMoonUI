@@ -17,6 +17,7 @@ print("Successfully initialized on Executor:", K_UI.GetExecutor())
 -- 3. Create Tabs
 local ModuleTab = Window:CreateTab("All Modules")
 local ApiTab = Window:CreateTab("API Showcase")
+local EspTab = Window:CreateTab("ESP Example")
 local SettingTab = Window:CreateTab("Settings")
 
 -- ==========================================
@@ -206,7 +207,46 @@ InfoSection:CreateButton("Print Executor Name", function()
 end)
 
 -- ==========================================
--- TAB 3: SETTINGS (Config System)
+-- TAB 3: ESP EXAMPLE (Live Player Updates)
+-- ==========================================
+local EspSection = EspTab:CreateSection("Target Selector")
+
+EspSection:CreateLabel("Demonstrates updating a dropdown with live players in the game!")
+
+-- Create the dropdown with initial players
+local function GetPlayerNames()
+    local names = {}
+    for _, p in ipairs(game.Players:GetPlayers()) do
+        table.insert(names, p.Name)
+    end
+    if #names == 0 then table.insert(names, "No Players Found") end
+    return names
+end
+
+local playerTargetDropdown = EspSection:CreateDropdown({
+    Name = "Select Player to ESP",
+    Options = GetPlayerNames(),
+    Default = "Select...",
+    Searchable = true,
+    Tooltip = "Choose a player from the server.",
+    Flag = "EspTargetPlayer",
+    Callback = function(selected)
+        print("ESP Target changed to:", selected)
+    end
+})
+
+EspSection:CreateButton("Refresh Player List", function()
+    -- Get the freshest list of players
+    local freshNames = GetPlayerNames()
+    
+    -- Update the dropdown dynamically using SetOptions!
+    playerTargetDropdown.SetOptions(freshNames)
+    print("Player list refreshed! Total players:", #freshNames)
+end)
+
+
+-- ==========================================
+-- TAB 4: SETTINGS (Config System)
 -- ==========================================
 local ConfigSection = SettingTab:CreateSection("Configuration")
 
