@@ -1,112 +1,151 @@
--- Example.lua: K-UI Showcase Script
+-- K-UI Full Showcase Script
+-- This script demonstrates every single feature available in the K-UI Library.
 
 local K_UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/master/K-UI.lua"))()
 
+-- 1. Create the Main Window
 local Window = K_UI:CreateWindow("K-UI Showcase", {
-    Accent = Color3.fromRGB(255, 90, 90) -- Example of overriding the accent color
+    Accent = Color3.fromRGB(255, 90, 90) -- Red accent color
 })
 
-local MainTab = Window:CreateTab("Main Features", "rbxassetid://6026568240")
-local ConfigTab = Window:CreateTab("Settings", "rbxassetid://6031280882")
+-- 2. Create Tabs
+local CombatTab = Window:CreateTab("Combat")
+local VisualsTab = Window:CreateTab("Visuals")
+local SettingsTab = Window:CreateTab("Settings")
 
-local MainSec = MainTab:CreateSection("Premium Elements")
+-- ==========================================
+-- COMBAT TAB
+-- ==========================================
+local AimbotSection = CombatTab:CreateSection("Aimbot Settings")
 
-MainSec:CreateLabel("Welcome to K-UI! This label is great for paragraphs and instructions.")
+-- Paragraph (Information text)
+AimbotSection:CreateParagraph("Welcome to K-UI! This is a paragraph. It's great for showing instructions, warnings, or general information to the user.")
 
-MainSec:CreateToggle({
-    Name = "Aimbot",
+-- Toggle
+AimbotSection:CreateToggle({
+    Name = "Enable Aimbot",
     Default = false,
-    Tooltip = "Automatically aims at the nearest enemy.",
-    Flag = "AimbotToggle",
+    Tooltip = "Turns the aimbot on or off.",
+    Flag = "AimbotEnabled",
     Callback = function(state)
-        print("Aimbot:", state)
+        print("Aimbot enabled:", state)
     end
 })
 
-MainSec:CreateSlider({
+-- Slider
+AimbotSection:CreateSlider({
     Name = "Aimbot FOV",
     Min = 0,
     Max = 360,
     Default = 90,
-    Tooltip = "Field of view for the aimbot.",
+    Tooltip = "Adjusts the field of view for the aimbot.",
     Flag = "AimbotFOV",
-    Callback = function(val)
-        print("FOV:", val)
+    Callback = function(value)
+        print("Aimbot FOV set to:", value)
     end
 })
 
-MainSec:CreateDropdown({
+-- Dropdown
+AimbotSection:CreateDropdown({
     Name = "Target Part (Searchable)",
     Options = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg"},
     Default = "Head",
-    Searchable = true,
-    Tooltip = "Select which part to aim at.",
-    Flag = "TargetPartDrop",
+    Tooltip = "Select which body part the aimbot should lock onto. You can type to search!",
+    Flag = "TargetPart",
     Callback = function(selected)
-        print("Target Part:", selected)
+        print("Target Part set to:", selected)
     end
 })
 
-MainSec:CreateMultiDropdown({
+-- Button
+AimbotSection:CreateButton({
+    Name = "Reset Aimbot Target",
+    Tooltip = "Clears your current aimbot target immediately.",
+    Callback = function()
+        print("Aimbot target reset!")
+    end
+})
+
+
+-- ==========================================
+-- VISUALS TAB
+-- ==========================================
+local ESPSection = VisualsTab:CreateSection("ESP Options")
+
+-- Multi-Dropdown
+ESPSection:CreateMultiDropdown({
     Name = "ESP Filters",
-    Options = {"Players", "NPCs", "Items", "Vehicles", "Bosses", "Allies", "Enemies"},
-    Default = {"Players", "Bosses"},
-    Searchable = true,
-    Tooltip = "Select multiple entities to draw ESP on.",
-    Flag = "ESPTypes",
+    Options = {"Players", "NPCs", "Items", "Vehicles", "Chests"},
+    Default = {"Players", "NPCs"},
+    Tooltip = "Select multiple entities to draw ESP boxes around.",
+    Flag = "ESPFilters",
     Callback = function(selectedArray)
-        print("ESP Types:")
-        for _, v in ipairs(selectedArray) do print("-", v) end
+        print("ESP Filters updated:")
+        for _, v in pairs(selectedArray) do
+            print("-", v)
+        end
     end
 })
 
-MainSec:CreateColorPicker({
+-- Color Picker
+ESPSection:CreateColorPicker({
     Name = "ESP Box Color (Alpha)",
     Default = Color3.fromRGB(255, 0, 0),
-    Tooltip = "Change the color and transparency of the ESP box.",
-    Flag = "ESPColor",
-    Callback = function(color, transparency)
-        print("Color changed:", color, "Transparency:", transparency)
+    Tooltip = "Choose the color and transparency (Alpha) for the ESP boxes.",
+    Flag = "ESPBoxColor",
+    Callback = function(color)
+        print("ESP Color changed to:", color.R, color.G, color.B)
     end
 })
 
-MainSec:CreateKeybind({
+
+-- ==========================================
+-- SETTINGS TAB
+-- ==========================================
+local MiscSection = SettingsTab:CreateSection("Miscellaneous")
+
+-- Keybind
+MiscSection:CreateKeybind({
     Name = "Triggerbot Key (Hold Mode)",
     Default = Enum.KeyCode.E,
-    Mode = "Hold", -- Can be Toggle, Hold, or Always
-    Tooltip = "Hold this key to automatically shoot enemies.",
+    Tooltip = "Hold this key to automatically shoot when aiming at an enemy.",
     Flag = "TriggerKey",
-    Callback = function(isActive)
-        print("Triggerbot Active:", isActive)
+    Callback = function(key)
+        print("Triggerbot Key set to:", key.Name)
     end
 })
 
-MainSec:CreateTextBox({
+-- TextBox
+MiscSection:CreateTextBox({
     Name = "Player to Target",
     Placeholder = "Enter username...",
-    Tooltip = "Target a specific player.",
-    Flag = "TargetName",
-    Callback = function(txt)
-        print("Targeting:", txt)
+    Tooltip = "Type a player's exact username here to exclusively target them.",
+    Flag = "TargetUsername",
+    Callback = function(text)
+        print("Now targeting player:", text)
     end
 })
 
-local ConfigSec = ConfigTab:CreateSection("Config System")
+local ConfigSection = SettingsTab:CreateSection("Configuration System")
 
-ConfigSec:CreateButton("Save Settings", function()
-    local success = Window:SaveConfig("K_UI_Configs", "MySettings")
-    if success then
-        print("Settings saved successfully!")
-    else
-        print("Your executor does not support writefile.")
+ConfigSection:CreateButton({
+    Name = "Save Config",
+    Tooltip = "Saves your current settings to your workspace folder.",
+    Callback = function()
+        -- Saves all elements that have a 'Flag' assigned to them.
+        Window:SaveConfig("K_UI_Configs", "MyShowcaseConfig")
+        print("Config saved!")
     end
-end)
+})
 
-ConfigSec:CreateButton("Load Settings", function()
-    local success = Window:LoadConfig("K_UI_Configs", "MySettings")
-    if success then
-        print("Settings loaded successfully!")
-    else
-        print("Failed to load settings.")
+ConfigSection:CreateButton({
+    Name = "Load Config",
+    Tooltip = "Loads your settings from your workspace folder.",
+    Callback = function()
+        Window:LoadConfig("K_UI_Configs", "MyShowcaseConfig")
+        print("Config loaded!")
     end
-end)
+})
+
+-- Finally, switch to the first tab when the UI loads.
+Window:SelectTab("Combat")
