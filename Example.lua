@@ -3,30 +3,25 @@
 -- Demonstrates EVERY SINGLE MODULE and API FEATURE available in the library!
 -- ==============================================================================
 
-local K_UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/e38cea3848c06e40f7b12e05ad0cfa408237efcb/K-UI.lua"))()
+local K_UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/master/K-UI.lua"))()
 
--- 1. Create the Main Window (Acrylic Effect/Blur is enabled!)
-local Window = K_UI:CreateWindow("K-UI Full API Showcase", {
+-- 1. Create the Main Window
+local Window = K_UI:CreateWindow("Blue Moon - Full Showcase", {
     Accent = Color3.fromRGB(114, 137, 218),
     Acrylic = true -- Enables background blur when UI is open!
 })
 
--- 2. Executor Detection
-print("Successfully initialized on Executor:", K_UI.GetExecutor())
-
--- 3. Create Tabs
+-- 2. Create Tabs
 local ModuleTab = Window:CreateTab("All Modules", "lucide-layout-list")
 local ApiTab = Window:CreateTab("API Showcase", "lucide-code-xml")
-local EspTab = Window:CreateTab("ESP Example", "lucide-eye")
+local DisableTab = Window:CreateTab("Toggle Control (Özel)", "lucide-power-off")
+local EspTab = Window:CreateTab("Live Updates", "lucide-eye")
 local SettingTab = Window:CreateTab("Settings", "lucide-settings")
 
 -- ==========================================
 -- TAB 1: ALL MODULES (Features)
 -- ==========================================
 local BasicSection = ModuleTab:CreateSection("Basic Elements")
-
--- Line Breaker (Divider)
-BasicSection:CreateDivider("Status Panel")
 
 -- Label
 local statusLabel = BasicSection:CreateLabel("Aimbot is currently OFF")
@@ -43,7 +38,7 @@ local aimbotToggle = BasicSection:CreateToggle({
 })
 
 -- Button
-local panicButton = BasicSection:CreateButton("Panic Button (Disable Aimbot)", function()
+local panicButton = BasicSection:CreateButton("Panic Button (Force Aimbot OFF)", function()
     aimbotToggle.SetValue(false)
 end)
 
@@ -59,37 +54,20 @@ local speedSlider = BasicSection:CreateSlider({
     Flag = "WalkSpeed",
     Callback = function(value)
         local character = game.Players.LocalPlayer.Character
-        if character then
-            local humanoid = character:FindFirstChild("Humanoid")
-            if humanoid then
-                humanoid.WalkSpeed = value
-                print("[DEBUG] WalkSpeed successfully set to:", value)
-            else
-                print("[DEBUG] Humanoid not found in character!")
-            end
-        else
-            print("[DEBUG] Character not found!")
+        if character and character:FindFirstChild("Humanoid") then
+            character.Humanoid.WalkSpeed = value
         end
     end
 })
-
--- Keep the walkspeed applied even if they die and respawn!
-game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    local humanoid = character:WaitForChild("Humanoid", 5)
-    if humanoid then
-        humanoid.WalkSpeed = speedSlider.GetValue()
-    end
-end)
 
 local AdvSection = ModuleTab:CreateSection("Advanced Elements")
 
 -- Dropdown
 local priorityDropdown = AdvSection:CreateDropdown({
-    Name = "Target Priority (Searchable)",
-    Options = {"Distance", "Health", "Threat", "Crosshair"},
+    Name = "Target Priority",
+    Options = {"Distance", "Health", "Threat"},
     Default = "Distance",
-    Searchable = true, -- Adds a search bar to the dropdown!
-    Tooltip = "Select which body part the aimbot should lock onto.",
+    Searchable = true,
     Flag = "TargetPriority",
     Callback = function(selected)
         print("Priority set to:", selected)
@@ -101,7 +79,6 @@ local filterMultiDropdown = AdvSection:CreateMultiDropdown({
     Name = "ESP Filters",
     Options = {"Players", "NPCs", "Items", "Vehicles", "Chests"},
     Default = {"Players", "NPCs"},
-    Tooltip = "Select multiple entities to draw ESP boxes around.",
     Flag = "ESPFilters",
     Callback = function(selectedArray)
         print("Selected ESP Filters:", unpack(selectedArray))
@@ -114,7 +91,6 @@ AdvSection:CreateDivider("Visuals & Misc")
 local espColorPicker = AdvSection:CreateColorPicker({
     Name = "ESP Box Color",
     Default = Color3.fromRGB(255, 0, 0),
-    Tooltip = "Choose the color for the ESP boxes.",
     Flag = "ESPBoxColor",
     Callback = function(color)
         print("ESP Color changed to:", color)
@@ -123,13 +99,9 @@ local espColorPicker = AdvSection:CreateColorPicker({
 
 -- Keybind
 local triggerBind = AdvSection:CreateKeybind({
-    Name = "Triggerbot Key (Hold Mode)",
+    Name = "Triggerbot Key",
     Default = Enum.KeyCode.E,
-    Tooltip = "Hold this key to automatically shoot.",
     Flag = "TriggerKey",
-    OnBind = function(key)
-        print("Triggerbot Key bound to:", key.Name)
-    end,
     Callback = function(state)
         print("Triggerbot Hold State:", state)
     end
@@ -139,7 +111,6 @@ local triggerBind = AdvSection:CreateKeybind({
 local targetTextBox = AdvSection:CreateTextBox({
     Name = "Player to Target",
     Placeholder = "Enter username...",
-    Tooltip = "Type a player's exact username here.",
     Flag = "TargetUsername",
     Callback = function(text)
         print("Now targeting player:", text)
@@ -154,151 +125,92 @@ AdvSection:CreateClipboard("Copy Discord Invite", "https://discord.gg/invite")
 -- ==========================================
 local ActionSection = ApiTab:CreateSection("Action Controls")
 
-ActionSection:CreateLabel("The buttons below use SetValue() to change elements.")
-
 ActionSection:CreateButton("Set Walkspeed to 100", function()
-    -- SetValue() - Changes value from code
     speedSlider.SetValue(100) 
 end)
 
-ActionSection:CreateKeybind({
-    Name = "Press X to Set WalkSpeed to 200",
-    Default = Enum.KeyCode.X,
-    Tooltip = "Press X on your keyboard to magically change the slider's value to 200!",
-    Flag = "WalkSpeedTrigger",
-    Callback = function(state)
-        if state then
-            speedSlider.SetValue(200)
-            print("Walkspeed forced to 200 via Keybind!")
-        end
-    end
-})
-
-ActionSection:CreateButton("Enable Aimbot & ESP Filters", function()
-    -- SetValue() - Changes value from code
-    aimbotToggle.SetValue(true)
-    filterMultiDropdown.SetValue({"Players", "Vehicles", "Chests"})
-end)
-
-local VisSection = ApiTab:CreateSection("Visibility Controls")
-
-VisSection:CreateLabel("Use SetVisible() to hide/show elements.")
-
-local isHidden = false
-VisSection:CreateButton("Toggle Slider Visibility", function()
-    isHidden = not isHidden
-    -- SetVisible() - Show/Hide
-    speedSlider.SetVisible(not isHidden) 
-end)
-
-local DisableSection = ApiTab:CreateSection("Disabling Controls")
-
-DisableSection:CreateLabel("Use SetDisabled() to make elements un-interactable.")
-
-local isDisabled = false
-DisableSection:CreateButton("Toggle Aimbot Interactability", function()
-    isDisabled = not isDisabled
-    -- SetDisabled() - Disable/Enable element interaction
-    aimbotToggle.SetDisabled(isDisabled)
-    panicButton.SetDisabled(isDisabled)
-end)
-
-local ModSection = ApiTab:CreateSection("Modification Controls")
-
-ModSection:CreateLabel("Use SetTitle, SetDescription, and SetOptions.")
-
-ModSection:CreateButton("Morph 'Target Priority' Dropdown", function()
-    -- SetTitle() - Change Title
+ActionSection:CreateButton("Morph 'Target Priority' Dropdown", function()
     priorityDropdown.SetTitle("Select Target Method (Updated!)")
-    
-    -- SetDescription() - Change Tooltip
     priorityDropdown.SetDescription("This tooltip was changed by the API!")
-    
-    -- SetOptions() (or Refresh()) - Change Dropdown Options
     priorityDropdown.SetOptions({"Closest", "Lowest HP", "Highest Level", "Random"})
 end)
 
-ModSection:CreateButton("Morph TextBox", function()
+ActionSection:CreateButton("Morph TextBox", function()
     targetTextBox.SetTitle("Enter Target ID (Changed)")
     targetTextBox.SetDescription("Now enter an ID instead of a Username.")
 end)
 
-local InfoSection = ApiTab:CreateSection("Data Reading")
+-- ==========================================
+-- TAB 3: TOGGLE KONTROLÜ (Toggle Kaldırma/Kapatma)
+-- ==========================================
+local ControlSection = DisableTab:CreateSection("Toggle'ı Yönetme (Aimbot Toggle'ı)")
 
-InfoSection:CreateButton("Print Current Aimbot State", function()
-    -- GetValue() - Read value without callback
-    local state = aimbotToggle.GetValue()
-    print("Aimbot is currently:", state)
+ControlSection:CreateLabel("Aşağıdaki butonlar 'All Modules' sekmesindeki Aimbot Toggle'ını kontrol eder.")
+
+-- 1. YÖNTEM: Kod ile kapalı hale getirmek (İşlevini Kapatmak)
+ControlSection:CreateButton("1. Toggle'ı ZORLA KAPAT (Değerini False Yap)", function()
+    aimbotToggle.SetValue(false) -- Bu, kullanıcının Toggle'a tıklamasıyla aynı şeydir, işlevi kapatır.
+    K_UI:Notify("Başarılı", "Aimbot Toggle'ı zorla kapatıldı!", 3)
 end)
 
-InfoSection:CreateButton("Print Executor Name", function()
-    -- Executor Detection
-    print("Your Executor is:", K_UI.GetExecutor())
+-- 2. YÖNTEM: Tıklanmasını engellemek (Disable yapmak)
+local isToggleDisabled = false
+ControlSection:CreateButton("2. Toggle'ı DEVRE DIŞI BIRAK / AÇ (Tıklanamaz Yap)", function()
+    isToggleDisabled = not isToggleDisabled
+    aimbotToggle.SetDisabled(isToggleDisabled) 
+    if isToggleDisabled then
+        K_UI:Notify("Kilitlendi", "Artık Aimbot Toggle'ına TIKLANAMAZ!", 3)
+    else
+        K_UI:Notify("Açıldı", "Artık Aimbot Toggle'ına Tıklanabilir!", 3)
+    end
 end)
+
+-- 3. YÖNTEM: Tamamen gözden kaybetmek (Kaldırmak / Hide)
+local isToggleHidden = false
+ControlSection:CreateButton("3. Toggle'ı TAMAMEN KALDIR / GERİ GETİR (Görünmez Yap)", function()
+    isToggleHidden = not isToggleHidden
+    aimbotToggle.SetVisible(not isToggleHidden)
+    if isToggleHidden then
+        K_UI:Notify("Kaldırıldı", "Aimbot Toggle'ı GUI'den tamamen silindi!", 3)
+    else
+        K_UI:Notify("Geri Geldi", "Aimbot Toggle'ı tekrar görünür oldu!", 3)
+    end
+end)
+
 
 -- ==========================================
--- TAB 3: ESP EXAMPLE (Live Player Updates)
+-- TAB 4: ESP EXAMPLE (Live Player Updates)
 -- ==========================================
 local EspSection = EspTab:CreateSection("Target Selector")
+EspSection:CreateLabel("Dropdown automatically updates with live players!")
 
-EspSection:CreateLabel("Demonstrates updating a dropdown with live players in the game!")
-
--- Create the dropdown with initial players
 local function GetPlayerNames()
     local names = {}
     for _, p in ipairs(game.Players:GetPlayers()) do
         table.insert(names, p.Name)
     end
-    if #names == 0 then table.insert(names, "No Players Found") end
     return names
 end
 
-local playerTargetDropdown = EspSection:CreateDropdown({
-    Name = "Select Player to ESP",
+local PlayerDropdown = EspSection:CreateDropdown({
+    Name = "Select Player to Spectate",
     Options = GetPlayerNames(),
-    Default = "Select...",
+    Default = game.Players.LocalPlayer.Name,
     Searchable = true,
-    Tooltip = "Choose a player from the server.",
-    Flag = "EspTargetPlayer",
     Callback = function(selected)
-        print("ESP Target changed to:", selected)
+        print("Spectating:", selected)
     end
 })
 
-EspSection:CreateButton("Refresh Player List", function()
-    -- Get the freshest list of players
-    local freshNames = GetPlayerNames()
-    
-    -- Update the dropdown dynamically using SetOptions!
-    playerTargetDropdown.SetOptions(freshNames)
-    print("Player list refreshed! Total players:", #freshNames)
-end)
-
-
--- ==========================================
--- TAB 4: SETTINGS (Config System)
--- ==========================================
-local ConfigSection = SettingTab:CreateSection("Configuration")
-
-ConfigSection:CreateLabel("Values Depolama Sistemi (Flags)")
-ConfigSection:CreateLabel("Any element with a 'Flag' property is saved here.")
-
-ConfigSection:CreateButton("Save Config", function()
-    Window:SaveConfig("K_UI_Configs", "FullShowcaseConfig")
-    print("Config saved!")
-end)
-
-ConfigSection:CreateButton("Load Config", function()
-    Window:LoadConfig("K_UI_Configs", "FullShowcaseConfig")
-    print("Config loaded!")
+local EspRefreshButton = EspSection:CreateButton("Refresh Player List", function()
+    PlayerDropdown.SetOptions(GetPlayerNames())
+    K_UI:Notify("Refreshed", "Player list has been successfully updated!", 2)
 end)
 
 -- ==========================================
--- EVENT LISTENERS SHOWCASE (OnChanged)
+-- TAB 5: SETTINGS
 -- ==========================================
--- You can attach an event AFTER creating an element!
-speedSlider.OnChanged(function(newVal)
-    print("[API LOG] Speed slider was moved to:", newVal)
-end)
+K_UI:BuildSettingsTab(SettingTab)
 
--- The first tab is selected automatically.
+-- Notification Example
+K_UI:Notify("Welcome!", "K-UI has successfully loaded the Full Showcase.", 5)
