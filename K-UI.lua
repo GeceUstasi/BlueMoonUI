@@ -1331,7 +1331,7 @@ function Library:CreateWindow(options)
 
                 Create("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(0.4, 0, 1, 0),
+                    Size = UDim2.new(0.5, 0, 1, 0),
                     Font = Enum.Font.Ubuntu,
                     Text = label,
                     TextColor3 = Theme.TextSecondary,
@@ -1341,8 +1341,8 @@ function Library:CreateWindow(options)
 
                 local BoxBg = Create("Frame", {
                     BackgroundColor3 = Theme.MainBackground,
-                    Position = UDim2.new(0.4, -28, 0, 0),
-                    Size = UDim2.new(0.6, 0, 1, 0)
+                    Position = UDim2.new(0.5, -28, 0, 0),
+                    Size = UDim2.new(0.5, 0, 1, 0)
                 }, {
                     Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
                     Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
