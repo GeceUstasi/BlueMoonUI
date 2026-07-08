@@ -1007,7 +1007,7 @@ function Library:CreateWindow(options)
                 API.SetValue = function(val) API.Set(val) end
                 API.SetVisible = function(state) DropContainer.Visible = state end
                 API.SetDisabled = function(state) 
-                    ValBtn.Active = not state 
+                    ValBtn.Interactable = not state 
                     DropLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) DropLbl.Text = title end
@@ -1261,7 +1261,7 @@ function Library:CreateWindow(options)
                 API.SetValue = function(val) API.Set(val) end
                 API.SetVisible = function(state) DropContainer.Visible = state end
                 API.SetDisabled = function(state) 
-                    ValBtn.Active = not state 
+                    ValBtn.Interactable = not state 
                     DropLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) DropLbl.Text = title end
@@ -1374,7 +1374,7 @@ function Library:CreateWindow(options)
                 API.SetValue = function(val) API.Set(val) end
                 API.SetVisible = function(state) SliderContainer.Visible = state end
                 API.SetDisabled = function(state) 
-                    SliderContainer.Active = not state 
+                    SliderContainer.Interactable = not state 
                     TitleLabel.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) TitleLabel.Text = title end
@@ -1568,7 +1568,7 @@ function Library:CreateWindow(options)
                 API.SetValue = function(val) API.Set(val) end
                 API.SetVisible = function(state) BindContainer.Visible = state end
                 API.SetDisabled = function(state) 
-                    BindBtn.Active = not state 
+                    BindBtn.Interactable = not state 
                     KeyTitleLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) KeyTitleLbl.Text = title end
@@ -1846,7 +1846,7 @@ function Library:CreateWindow(options)
                 API.SetValue = function(val) API.Set(val) end
                 API.SetVisible = function(state) CPContainer.Visible = state end
                 API.SetDisabled = function(state) 
-                    ColorDisplayBtn.Active = not state 
+                    ColorDisplayBtn.Interactable = not state 
                     ColorLbl.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) ColorLbl.Text = title end
@@ -1927,7 +1927,7 @@ function Library:CreateWindow(options)
                 API.SetValue = function(val) API.Set(val) end
                 API.SetVisible = function(state) TogBtn.Visible = state end
                 API.SetDisabled = function(state) 
-                    TogBtn.Active = not state 
+                    TogBtn.Interactable = not state 
                     TogBtn.AutoButtonColor = not state
                     TogLbl.TextTransparency = state and 0.5 or 0
                 end
@@ -1958,7 +1958,7 @@ function Library:CreateWindow(options)
                 local API = {}
                 API.SetVisible = function(state) Btn.Visible = state end
                 API.SetDisabled = function(state) 
-                    Btn.Active = not state 
+                    Btn.Interactable = not state 
                     Btn.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) Btn.Text = title end
@@ -2011,7 +2011,7 @@ function Library:CreateWindow(options)
                 end
                 API.SetVisible = function(state) Btn.Visible = state end
                 API.SetDisabled = function(state) 
-                    Btn.Active = not state 
+                    Btn.Interactable = not state 
                     Btn.TextTransparency = state and 0.5 or 0
                 end
                 API.SetTitle = function(title) Btn.Text = title end
