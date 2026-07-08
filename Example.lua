@@ -58,8 +58,17 @@ local speedSlider = BasicSection:CreateSlider({
     Tooltip = "Adjusts your character's walking speed.",
     Flag = "WalkSpeed",
     Callback = function(value)
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+        local character = game.Players.LocalPlayer.Character
+        if character then
+            local humanoid = character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = value
+                print("[DEBUG] WalkSpeed successfully set to:", value)
+            else
+                print("[DEBUG] Humanoid not found in character!")
+            end
+        else
+            print("[DEBUG] Character not found!")
         end
     end
 })
