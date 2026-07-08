@@ -793,7 +793,7 @@ function Library:CreateWindow(options)
 
                 local ValBtn = Create("TextButton", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0.5, 0, 0, 0),
+                    Position = UDim2.new(0.5, -28, 0, 0),
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Text = ""
                 })
@@ -1015,7 +1015,7 @@ function Library:CreateWindow(options)
 
                 local ValBtn = Create("TextButton", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0.5, 0, 0, 0),
+                    Position = UDim2.new(0.5, -28, 0, 0),
                     Size = UDim2.new(0.5, 0, 1, 0),
                     Text = ""
                 })
@@ -1242,7 +1242,7 @@ function Library:CreateWindow(options)
 
                 local ValLabel = Create("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, -50, 0, 0),
+                    Position = UDim2.new(1, -78, 0, 0),
                     Size = UDim2.new(0, 50, 0, 20),
                     Font = Enum.Font.Ubuntu,
                     Text = tostring(value),
@@ -1255,7 +1255,7 @@ function Library:CreateWindow(options)
                 local Track = Create("Frame", {
                     BackgroundColor3 = Theme.MainBackground,
                     Position = UDim2.new(0, 0, 0, 30),
-                    Size = UDim2.new(1, 0, 0, 6)
+                    Size = UDim2.new(1, -28, 0, 6)
                 }, {
                     Create("UICorner", { CornerRadius = UDim.new(1, 0) }),
                     Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
@@ -1341,7 +1341,7 @@ function Library:CreateWindow(options)
 
                 local BoxBg = Create("Frame", {
                     BackgroundColor3 = Theme.MainBackground,
-                    Position = UDim2.new(0.4, 0, 0, 0),
+                    Position = UDim2.new(0.4, -28, 0, 0),
                     Size = UDim2.new(0.6, 0, 1, 0)
                 }, {
                     Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
@@ -1410,7 +1410,7 @@ function Library:CreateWindow(options)
 
                 local BindBtn = Create("TextButton", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
-                    Position = UDim2.new(0.5, 0, 0, 2),
+                    Position = UDim2.new(0.5, -28, 0, 2),
                     Size = UDim2.new(0.5, 0, 1, -4),
                     Text = "",
                     AutoButtonColor = false
@@ -1529,7 +1529,7 @@ function Library:CreateWindow(options)
 
                 local ColorDisplayBtn = Create("TextButton", {
                     BackgroundColor3 = Theme.HeaderButtonBackground,
-                    Position = UDim2.new(0.8, 0, 0, 2),
+                    Position = UDim2.new(0.8, -28, 0, 2),
                     Size = UDim2.new(0.2, 0, 1, -4),
                     Text = "",
                     AutoButtonColor = false
