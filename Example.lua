@@ -3,7 +3,7 @@
 -- Demonstrates EVERY SINGLE MODULE and API FEATURE available in the library!
 -- ==============================================================================
 
-local K_UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/49c6676f2d0390012c7e225b450e4a95ab435cc1/K-UI.lua"))()
+local K_UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/495301f9d73b2fc701c15b1727cd4fe543dae5c1/K-UI.lua"))()
 
 -- 1. Create the Main Window
 local Window = K_UI:CreateWindow("Blue Moon - Full Showcase", {
