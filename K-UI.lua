@@ -1996,6 +1996,60 @@ function Library:CreateWindow(options)
                 return API
             end
 
+            function SecObj:CreateDivider(configOrTitle)
+                local title = type(configOrTitle) == "table" and configOrTitle.Title or configOrTitle
+                
+                local DividerFrame = Create("Frame", {
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 0, title and 24 or 16),
+                    Parent = SectionContainer
+                })
+                
+                if title and title ~= "" then
+                    local LeftLine = Create("Frame", {
+                        BackgroundColor3 = Theme.Border,
+                        BorderSizePixel = 0,
+                        Position = UDim2.new(0, 5, 0.5, 0),
+                        Size = UDim2.new(0.5, -45, 0, 1),
+                        Parent = DividerFrame
+                    })
+                    local TitleLbl = Create("TextLabel", {
+                        BackgroundTransparency = 1,
+                        Position = UDim2.new(0, 0, 0, 0),
+                        Size = UDim2.new(1, 0, 1, 0),
+                        Font = Enum.Font.Ubuntu,
+                        Text = title,
+                        TextColor3 = Theme.TextSecondary,
+                        TextSize = 12,
+                        TextXAlignment = Enum.TextXAlignment.Center,
+                        Parent = DividerFrame
+                    })
+                    local RightLine = Create("Frame", {
+                        BackgroundColor3 = Theme.Border,
+                        BorderSizePixel = 0,
+                        AnchorPoint = Vector2.new(1, 0.5),
+                        Position = UDim2.new(1, -5, 0.5, 0),
+                        Size = UDim2.new(0.5, -45, 0, 1),
+                        Parent = DividerFrame
+                    })
+                else
+                    Create("Frame", {
+                        BackgroundColor3 = Theme.Border,
+                        BorderSizePixel = 0,
+                        Position = UDim2.new(0, 5, 0.5, 0),
+                        Size = UDim2.new(1, -10, 0, 1),
+                        Parent = DividerFrame
+                    })
+                end
+                
+                local API = {}
+                API.SetVisible = function(state) DividerFrame.Visible = state end
+                if type(configOrTitle) == "table" and configOrTitle.Visible == false then
+                    API.SetVisible(false)
+                end
+                return API
+            end
+            
             function SecObj:CreateLabel(text)
                 local Lbl = Create("TextLabel", {
                     BackgroundTransparency = 1,
