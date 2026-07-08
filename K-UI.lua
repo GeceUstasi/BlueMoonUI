@@ -760,7 +760,7 @@ function Library:CreateWindow(options)
                 local callback = config.Callback
                 local tooltip = config.Tooltip
                 local flag = config.Flag
-                local searchable = config.Searchable or false
+                local searchable = config.Searchable == nil and true or config.Searchable
 
                 local selected = default or options[1] or "None"
                 local isExpanded = false
@@ -899,6 +899,22 @@ function Library:CreateWindow(options)
                     UpdateHeight()
                 end
 
+                if searchable then
+                    SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+                        local filter = string.lower(SearchBox.Text)
+                        for _, child in pairs(DropList:GetChildren()) do
+                            if child:IsA("TextButton") then
+                                if filter == "" then
+                                    child.Visible = true
+                                else
+                                    child.Visible = string.find(string.lower(child.Text), filter, 1, true) ~= nil
+                                end
+                            end
+                        end
+                        UpdateHeight()
+                    end)
+                end
+
                 UpdateOptions(options)
 
                 ValBtn.MouseButton1Click:Connect(function()
@@ -956,7 +972,7 @@ function Library:CreateWindow(options)
                 local callback = config.Callback
                 local tooltip = config.Tooltip
                 local flag = config.Flag
-                local searchable = config.Searchable or false
+                local searchable = config.Searchable == nil and true or config.Searchable
 
                 local selectedDict = {}
                 if defaultArray then
