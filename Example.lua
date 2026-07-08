@@ -1,30 +1,33 @@
--- K-UI Full Showcase Script
--- This script demonstrates every single feature available in the K-UI Library.
+-- ==============================================================================
+-- K-UI Full Showcase & API Testing Script
+-- Demonstrates every single feature and API method available in the K-UI Library.
+-- ==============================================================================
 
 local K_UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/GeceUstasi/BlueMoonUI/master/K-UI.lua"))()
 
--- 1. Create the Main Window
-local Window = K_UI:CreateWindow("K-UI Showcase", {
+-- 1. Create the Main Window (Notice the Acrylic parameter!)
+local Window = K_UI:CreateWindow("K-UI Full Showcase", {
     Accent = Color3.fromRGB(58, 108, 243),
-    Acrylic = true -- Enables background blur when UI is open
+    Acrylic = true -- Enables background blur when UI is open!
 })
 
-print("Injected via:", K_UI.GetExecutor())
+print("Injected successfully via:", K_UI.GetExecutor())
 
 -- 2. Create Tabs
-local CombatTab = Window:CreateTab("Combat")
-local VisualsTab = Window:CreateTab("Visuals")
+local MainTab = Window:CreateTab("Main Features")
+local ApiTab = Window:CreateTab("API Testing")
+local SettingsTab = Window:CreateTab("Settings")
 
 -- ==========================================
--- COMBAT TAB
+-- MAIN FEATURES TAB
 -- ==========================================
-local AimbotSection = CombatTab:CreateSection("Aimbot Settings")
+local BasicSection = MainTab:CreateSection("Basic Elements")
 
--- Label (Information text)
-AimbotSection:CreateLabel("Welcome to K-UI! This is a label. It's great for showing instructions, warnings, or general information to the user.")
+-- Label
+local infoLabel = BasicSection:CreateLabel("Welcome! This tab shows standard UI elements.")
 
 -- Toggle
-AimbotSection:CreateToggle({
+local aimbotToggle = BasicSection:CreateToggle({
     Name = "Enable Aimbot",
     Default = false,
     Tooltip = "Turn the Aimbot on or off.",
@@ -34,10 +37,10 @@ AimbotSection:CreateToggle({
     end
 })
 
-AimbotSection:CreateDivider()
+BasicSection:CreateDivider("Adjustments")
 
 -- Slider
-local fovSlider = AimbotSection:CreateSlider({
+local fovSlider = BasicSection:CreateSlider({
     Name = "Aimbot FOV",
     Min = 0,
     Max = 360,
@@ -49,67 +52,43 @@ local fovSlider = AimbotSection:CreateSlider({
     end
 })
 
--- Dropdown
-AimbotSection:CreateDropdown({
-    Name = "Target Part (Searchable)",
-    Options = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg"},
-    Default = "Head",
-    Searchable = true,
-    Tooltip = "Select which body part the aimbot should lock onto. You can type to search!",
-    Flag = "TargetPart",
-    Callback = function(selected)
-        print("Target Part set to:", selected)
-    end
-})
-
 -- Button
-AimbotSection:CreateButton("Reset FOV to 90", function()
-    fovSlider.Set(90)
-    print("FOV Reset!")
+BasicSection:CreateButton("Reset FOV to 90", function()
+    fovSlider.SetValue(90)
+    print("FOV Reset via script!")
 end)
 
+local AdvSection = MainTab:CreateSection("Advanced Elements")
 
--- ==========================================
--- VISUALS TAB
--- ==========================================
-local ESPSection = VisualsTab:CreateSection("ESP Options")
-
-ESPSection:CreateDivider("Visual Filters")
-
-local dynDrop = ESPSection:CreateDropdown({
-    Name = "Target Priority",
-    Options = {"Distance", "Health", "Threat"},
+-- Dropdown
+local priorityDropdown = AdvSection:CreateDropdown({
+    Name = "Target Priority (Searchable)",
+    Options = {"Distance", "Health", "Threat", "Crosshair"},
     Default = "Distance",
-    Tooltip = "Choose who the Aimbot targets first.",
+    Searchable = true,
+    Tooltip = "Select which body part the aimbot should lock onto.",
     Flag = "TargetPriority",
     Callback = function(selected)
         print("Priority set to:", selected)
     end
 })
 
-ESPSection:CreateButton("Update Priority Options", function()
-    dynDrop.SetOptions({"Closest", "Lowest HP", "Highest Level"})
-    dynDrop.SetTitle("Target Priority (Updated)")
-    print("Dropdown options updated via API!")
-end)
-
 -- Multi-Dropdown
-local multiDrop = ESPSection:CreateMultiDropdown({
+local filterMultiDropdown = AdvSection:CreateMultiDropdown({
     Name = "ESP Filters",
     Options = {"Players", "NPCs", "Items", "Vehicles", "Chests"},
     Default = {"Players", "NPCs"},
     Tooltip = "Select multiple entities to draw ESP boxes around.",
     Flag = "ESPFilters",
     Callback = function(selectedArray)
-        print("ESP Filters updated:")
-        for _, v in pairs(selectedArray) do
-            print("-", v)
-        end
+        print("ESP Filters updated! Selected count:", #selectedArray)
     end
 })
 
+AdvSection:CreateDivider()
+
 -- Color Picker
-ESPSection:CreateColorPicker({
+local espColorPicker = AdvSection:CreateColorPicker({
     Name = "ESP Box Color (Alpha)",
     Default = Color3.fromRGB(255, 0, 0),
     Tooltip = "Choose the color and transparency (Alpha) for the ESP boxes.",
@@ -119,14 +98,8 @@ ESPSection:CreateColorPicker({
     end
 })
 
-
--- ==========================================
--- MISC / OTHER
--- ==========================================
-local MiscSection = CombatTab:CreateSection("Miscellaneous")
-
 -- Keybind
-local triggerBind = MiscSection:CreateKeybind({
+local triggerBind = AdvSection:CreateKeybind({
     Name = "Triggerbot Key (Hold Mode)",
     Default = Enum.KeyCode.E,
     Tooltip = "Hold this key to automatically shoot when aiming at an enemy.",
@@ -140,7 +113,7 @@ local triggerBind = MiscSection:CreateKeybind({
 })
 
 -- TextBox
-MiscSection:CreateTextBox({
+local targetTextBox = AdvSection:CreateTextBox({
     Name = "Player to Target",
     Placeholder = "Enter username...",
     Tooltip = "Type a player's exact username here to exclusively target them.",
@@ -150,25 +123,80 @@ MiscSection:CreateTextBox({
     end
 })
 
-MiscSection:CreateClipboard("Copy Discord Invite", "https://discord.gg/invite")
+-- Clipboard
+AdvSection:CreateClipboard("Copy Discord Invite", "https://discord.gg/invite")
 
-MiscSection:CreateDivider("API Demonstration")
 
-local apiToggle = MiscSection:CreateToggle({
-    Name = "Disable Settings",
+-- ==========================================
+-- API TESTING TAB
+-- ==========================================
+local DynamicSection = ApiTab:CreateSection("Dynamic API Controls")
+
+DynamicSection:CreateLabel("Use the buttons below to magically alter the elements in the 'Main Features' tab using the new K-UI API!")
+
+DynamicSection:CreateDivider("Visibility API")
+
+DynamicSection:CreateToggle({
+    Name = "Hide FOV Slider",
     Default = false,
     Callback = function(state)
-        -- Demonstrating the SetDisabled API on other elements
-        triggerBind.SetDisabled(state)
-        if state then
-            triggerBind.SetTitle("Triggerbot (DISABLED)")
-        else
-            triggerBind.SetTitle("Triggerbot Key (Hold Mode)")
-        end
+        fovSlider.SetVisible(not state) -- If true, Visible becomes false
     end
 })
 
-local ConfigSection = VisualsTab:CreateSection("Configuration System")
+DynamicSection:CreateToggle({
+    Name = "Hide ESP Filters",
+    Default = false,
+    Callback = function(state)
+        filterMultiDropdown.SetVisible(not state)
+    end
+})
+
+DynamicSection:CreateDivider("Disable API")
+
+DynamicSection:CreateToggle({
+    Name = "Disable Aimbot Toggle",
+    Default = false,
+    Tooltip = "Makes the toggle unclickable and greyed out.",
+    Callback = function(state)
+        aimbotToggle.SetDisabled(state)
+    end
+})
+
+DynamicSection:CreateToggle({
+    Name = "Disable Target Priority",
+    Default = false,
+    Callback = function(state)
+        priorityDropdown.SetDisabled(state)
+    end
+})
+
+DynamicSection:CreateDivider("Modification API")
+
+DynamicSection:CreateButton("Change Toggle Title & Description", function()
+    aimbotToggle.SetTitle("Super Aimbot (PRO)")
+    aimbotToggle.SetDescription("This description was dynamically updated via API.SetDescription!")
+end)
+
+DynamicSection:CreateButton("Set FOV to 360", function()
+    fovSlider.SetValue(360)
+end)
+
+DynamicSection:CreateButton("Update Priority Options (Dropdown)", function()
+    priorityDropdown.SetOptions({"Closest", "Lowest HP", "Highest Level", "Random"})
+    priorityDropdown.SetTitle("Target Priority (Updated Options)")
+    print("Dropdown options updated via API!")
+end)
+
+DynamicSection:CreateButton("Change Textbox Title", function()
+    targetTextBox.SetTitle("Target by User ID instead")
+    targetTextBox.SetValue("123456789")
+end)
+
+-- ==========================================
+-- SETTINGS TAB (Configs)
+-- ==========================================
+local ConfigSection = SettingsTab:CreateSection("Configuration System")
 
 ConfigSection:CreateButton("Save Config", function()
     -- Saves all elements that have a 'Flag' assigned to them.
