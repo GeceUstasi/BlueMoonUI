@@ -21,23 +21,6 @@ local Window = K_UI:CreateWindow("Universal Hub", {
     ToggleKey = Enum.KeyCode.RightShift
 })
 
--- Watermark Setup
-local Watermark = Window:CreateWatermark("Blue Moon Hub | FPS: 0 | Ping: 0ms")
-local lastTick = tick()
-local frames = 0
-RunService.RenderStepped:Connect(function()
-    frames = frames + 1
-    if tick() - lastTick >= 1 then
-        local fps = frames
-        local ping = math.floor(LocalPlayer:GetNetworkPing() * 1000)
-        local timeStr = os.date("%X")
-        Watermark:SetText(string.format("<b>Blue Moon</b> | FPS: %d | Ping: %dms | %s", fps, ping, timeStr))
-        frames = 0
-        lastTick = tick()
-    end
-end)
-
-
 -- TABS
 local LocalTab = Window:CreateTab("LocalPlayer", K_UI.GetIcon("lucide-user"))
 local CombatTab = Window:CreateTab("Combat", K_UI.GetIcon("lucide-crosshair"))
