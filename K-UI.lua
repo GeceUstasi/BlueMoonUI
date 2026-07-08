@@ -686,16 +686,25 @@ function Library:CreateWindow(options)
 
                 local function AddTooltip(parent, text)
                     if not text then return end
-                    local InfoIcon = Create("TextLabel", {
+                    local InfoIcon = Create("Frame", {
+                        BackgroundColor3 = Theme.HeaderButtonBackground,
+                        Position = UDim2.new(1, -25, 0.5, -9),
+                        Size = UDim2.new(0, 18, 0, 18),
+                        Parent = parent,
+                        ZIndex = parent.ZIndex + 1
+                    }, {
+                        Create("UICorner", { CornerRadius = UDim.new(1, 0) }),
+                        Create("UIStroke", { Color = Theme.Border, Thickness = 1 })
+                    })
+                    Create("TextLabel", {
                         BackgroundTransparency = 1,
-                        Position = UDim2.new(1, -25, 0.5, -10),
-                        Size = UDim2.new(0, 20, 0, 20),
+                        Size = UDim2.new(1, 0, 1, 0),
                         Font = Enum.Font.Ubuntu,
                         Text = "?",
                         TextColor3 = Theme.TextSecondary,
-                        TextSize = 14,
-                        Parent = parent,
-                        ZIndex = parent.ZIndex + 1
+                        TextSize = 11,
+                        Parent = InfoIcon,
+                        ZIndex = InfoIcon.ZIndex + 1
                     })
                     local TipFrame = Create("Frame", {
                         BackgroundColor3 = Theme.HeaderButtonBackground,
